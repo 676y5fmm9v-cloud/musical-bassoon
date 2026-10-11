@@ -3,6 +3,18 @@
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-kalan-green: #1a5c2a;
+  --color-kalan-green-dark: #0f3818;
+  --color-kalan-green-light: #e8f5e9;
+  --color-kalan-red: #c62828;
+  --color-kalan-red-light: #fdecea;
+  --color-kalan-yellow: #f9a825;
+  --color-kalan-yellow-light: #fff8e1;
+  --color-kalan-blue: #1565c0;
+  --color-kalan-blue-light: #e3f2fd;
+  --color-kalan-purple: #5c6bc0;
+  --color-kalan-purple-light: #ede7f6;
 }
 
 body {

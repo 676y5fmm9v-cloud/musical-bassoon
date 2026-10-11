@@ -1,30 +1,52 @@
-# Kalan — Gestion Scolaire
+# Kalan — Toute l'école dans une seule application
 
 Kalan (« étude » / « leçon » en bambara) est une application web de gestion
-d'école : élèves, enseignants, classes, matières et notes, avec calcul
-automatique des bulletins par trimestre.
+scolaire multi-rôles : **Élève**, **Professeur**, **Parent** et **École**
+(direction/secrétariat), chacun avec son propre espace et son authentification.
 
 ## Fonctionnalités
 
-- **Tableau de bord** : effectifs, moyenne générale, répartition par classe.
-- **Élèves** : inscription, recherche/filtrage, fiche détaillée avec bulletin
-  (devoir + composition, moyenne pondérée par coefficient) par trimestre.
-- **Enseignants** : fiche, classes dont ils sont titulaires.
-- **Classes** : effectif, titulaire, liste des élèves inscrits.
-- **Matières** : nom et coefficient, utilisés dans le calcul des moyennes.
-- **Notes** : saisie en masse par classe/matière/trimestre, avec liste et
-  filtres.
+### Authentification
+Connexion par identifiant + mot de passe (le rôle et les droits sont
+déterminés côté serveur à partir de l'identifiant, jamais par le client).
+Sessions signées (JWT, cookie `httpOnly`), chaque route et chaque action est
+protégée par rôle.
+
+### Espace École (direction, secrétariat, comptabilité)
+Tableau de bord, gestion des élèves/enseignants/classes/matières, affectation
+des enseignants aux classes/matières, saisie de notes, annonces (toute
+l'école / une classe / parents / professeurs), messagerie.
+
+### Espace Professeur
+Ses classes (scopées à ses affectations), publication de cours, création de
+devoirs et notation des copies rendues, saisie de notes, appel (absences),
+cahier de textes, messagerie.
+
+### Espace Élève
+Bulletin par trimestre (devoir + composition, moyenne pondérée par
+coefficient), devoirs à faire/rendus avec soumission, cours publiés, cahier
+de textes, absences, messagerie.
+
+### Espace Parent
+Sélecteur d'enfant (si plusieurs enfants liés au compte), notes et absences
+de chaque enfant, annonces de l'école, messagerie avec les enseignants et la
+direction.
 
 ## Stack technique
 
-- [Next.js 16](https://nextjs.org) (App Router, Server Actions, TypeScript)
+- [Next.js 16](https://nextjs.org) (App Router, Server Actions, Proxy, TypeScript)
 - [Tailwind CSS 4](https://tailwindcss.com)
 - [`node:sqlite`](https://nodejs.org/api/sqlite.html) (module natif de
   Node.js, expérimental) pour la persistance — aucune dépendance native à
   compiler ni service de base de données externe à installer.
+- [`jose`](https://github.com/panva/jose) pour les sessions JWT signées, et
+  `node:crypto` (scrypt) pour le hachage des mots de passe.
 
 La base de données SQLite est créée automatiquement (schéma + données de
 démonstration) au premier démarrage, dans `data/kalan.db` (ignoré par git).
+Le secret de signature des sessions est lui aussi généré et stocké
+automatiquement dans `data/.session-secret` (ou défini via la variable
+d'environnement `SESSION_SECRET`).
 
 ## Démarrage
 
@@ -35,12 +57,37 @@ npm install
 npm run dev
 ```
 
-Ouvrez [http://localhost:3000](http://localhost:3000). Des données de
-démonstration (classes, enseignants, matières, élèves et notes maliens
-fictifs) sont générées automatiquement au premier lancement.
+Ouvrez [http://localhost:3000](http://localhost:3000) — vous serez redirigé
+vers la page de connexion. Des données de démonstration (classes,
+enseignants, élèves, parents, notes, devoirs, cours, absences, annonces et
+messages fictifs) sont générées automatiquement au premier lancement, avec un
+compte par rôle :
+
+| Rôle | Identifiant | Mot de passe |
+| --- | --- | --- |
+| Élève | `KLNE2026-0001` | `kalan2026` |
+| Professeur | `KLNP2026-0001` | `kalan2026` |
+| Parent (2 enfants) | `KLNPA2026-0001` | `kalan2026` |
+| Direction | `KLND2026-0001` | `kalan2026` |
+| Secrétariat | `KLNS2026-0001` | `kalan2026` |
+| Comptabilité | `KLNC2026-0001` | `kalan2026` |
 
 Pour repartir d'une base vide, supprimez le dossier `data/` puis relancez
 l'application.
+
+## Portée actuelle et prochaines étapes
+
+Cette version est volontairement **mono-école**. Elle couvre les 4 rôles
+(Élève, Professeur, Parent, École) avec authentification réelle. Sont
+explicitement hors-périmètre pour l'instant, à ajouter dans une phase
+ultérieure si besoin :
+
+- **Multi-écoles** : plusieurs établissements clients + un rôle Super Admin
+  Kalan avec vue globale et abonnements.
+- **Finances** : paiements de scolarité, factures, relances, Mobile Money.
+- **Emploi du temps** : grille horaire par classe.
+- **Quiz interactifs**, **génération de documents PDF** (attestations,
+  bulletins officiels) et **notifications SMS** aux parents.
 
 ## Scripts
 

@@ -88,6 +88,143 @@ function migrate(database: DatabaseSync) {
     CREATE INDEX IF NOT EXISTS idx_notes_eleve ON notes(eleve_id);
     CREATE INDEX IF NOT EXISTS idx_notes_matiere ON notes(matiere_id);
     CREATE INDEX IF NOT EXISTS idx_classes_enseignant ON classes(enseignant_principal_id);
+
+    -- ── Comptes & rôles ──────────────────────────────────────────────
+    CREATE TABLE IF NOT EXISTS comptes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      identifiant TEXT NOT NULL UNIQUE,
+      mot_de_passe_hash TEXT NOT NULL,
+      role TEXT NOT NULL CHECK (role IN ('eleve','prof','parent','ecole')),
+      sous_role TEXT CHECK (sous_role IN ('directeur','secretaire','comptable','superecole')),
+      nom TEXT NOT NULL,
+      telephone TEXT,
+      eleve_id INTEGER REFERENCES eleves(id) ON DELETE CASCADE,
+      enseignant_id INTEGER REFERENCES enseignants(id) ON DELETE CASCADE,
+      actif INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_comptes_eleve ON comptes(eleve_id);
+    CREATE INDEX IF NOT EXISTS idx_comptes_enseignant ON comptes(enseignant_id);
+
+    CREATE TABLE IF NOT EXISTS parent_eleve (
+      compte_id INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE,
+      eleve_id INTEGER NOT NULL REFERENCES eleves(id) ON DELETE CASCADE,
+      PRIMARY KEY (compte_id, eleve_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_parent_eleve_eleve ON parent_eleve(eleve_id);
+
+    -- Quelle matière un enseignant donne dans quelle classe
+    CREATE TABLE IF NOT EXISTS affectations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      enseignant_id INTEGER NOT NULL REFERENCES enseignants(id) ON DELETE CASCADE,
+      classe_id INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+      matiere_id INTEGER NOT NULL REFERENCES matieres(id) ON DELETE CASCADE,
+      UNIQUE(enseignant_id, classe_id, matiere_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_affectations_enseignant ON affectations(enseignant_id);
+    CREATE INDEX IF NOT EXISTS idx_affectations_classe ON affectations(classe_id);
+
+    -- ── Pédagogie ────────────────────────────────────────────────────
+    CREATE TABLE IF NOT EXISTS cours (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      titre TEXT NOT NULL,
+      classe_id INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+      matiere_id INTEGER NOT NULL REFERENCES matieres(id) ON DELETE CASCADE,
+      enseignant_id INTEGER NOT NULL REFERENCES enseignants(id) ON DELETE CASCADE,
+      fichier_nom TEXT,
+      date TEXT NOT NULL DEFAULT (date('now')),
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_cours_classe ON cours(classe_id);
+
+    CREATE TABLE IF NOT EXISTS devoirs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      titre TEXT NOT NULL,
+      consignes TEXT,
+      classe_id INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+      matiere_id INTEGER NOT NULL REFERENCES matieres(id) ON DELETE CASCADE,
+      enseignant_id INTEGER NOT NULL REFERENCES enseignants(id) ON DELETE CASCADE,
+      date_limite TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_devoirs_classe ON devoirs(classe_id);
+
+    CREATE TABLE IF NOT EXISTS devoir_rendus (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      devoir_id INTEGER NOT NULL REFERENCES devoirs(id) ON DELETE CASCADE,
+      eleve_id INTEGER NOT NULL REFERENCES eleves(id) ON DELETE CASCADE,
+      rendu_le TEXT,
+      commentaire TEXT,
+      fichier_nom TEXT,
+      note REAL CHECK (note IS NULL OR (note >= 0 AND note <= 20)),
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(devoir_id, eleve_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_devoir_rendus_devoir ON devoir_rendus(devoir_id);
+    CREATE INDEX IF NOT EXISTS idx_devoir_rendus_eleve ON devoir_rendus(eleve_id);
+
+    CREATE TABLE IF NOT EXISTS cahier_texte (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      classe_id INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+      matiere_id INTEGER NOT NULL REFERENCES matieres(id) ON DELETE CASCADE,
+      enseignant_id INTEGER NOT NULL REFERENCES enseignants(id) ON DELETE CASCADE,
+      date TEXT NOT NULL DEFAULT (date('now')),
+      contenu_seance TEXT NOT NULL,
+      travail_donne TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_cahier_classe ON cahier_texte(classe_id);
+
+    -- ── Vie scolaire ─────────────────────────────────────────────────
+    CREATE TABLE IF NOT EXISTS absences (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      eleve_id INTEGER NOT NULL REFERENCES eleves(id) ON DELETE CASCADE,
+      classe_id INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+      matiere_id INTEGER REFERENCES matieres(id) ON DELETE SET NULL,
+      enseignant_id INTEGER REFERENCES enseignants(id) ON DELETE SET NULL,
+      date TEXT NOT NULL DEFAULT (date('now')),
+      statut TEXT NOT NULL DEFAULT 'absent' CHECK (statut IN ('absent','retard')),
+      justifiee INTEGER NOT NULL DEFAULT 0,
+      motif TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_absences_eleve ON absences(eleve_id);
+    CREATE INDEX IF NOT EXISTS idx_absences_classe ON absences(classe_id);
+
+    CREATE TABLE IF NOT EXISTS edt_creneaux (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      classe_id INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+      matiere_id INTEGER NOT NULL REFERENCES matieres(id) ON DELETE CASCADE,
+      enseignant_id INTEGER REFERENCES enseignants(id) ON DELETE SET NULL,
+      jour_semaine INTEGER NOT NULL CHECK (jour_semaine BETWEEN 1 AND 6),
+      heure_debut TEXT NOT NULL,
+      heure_fin TEXT NOT NULL,
+      salle TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_edt_classe ON edt_creneaux(classe_id);
+
+    -- ── Communication ────────────────────────────────────────────────
+    CREATE TABLE IF NOT EXISTS annonces (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      titre TEXT NOT NULL,
+      message TEXT NOT NULL,
+      cible TEXT NOT NULL DEFAULT 'ecole' CHECK (cible IN ('ecole','parents','profs','classe')),
+      classe_id INTEGER REFERENCES classes(id) ON DELETE CASCADE,
+      auteur_compte_id INTEGER REFERENCES comptes(id) ON DELETE SET NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      expediteur_id INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE,
+      destinataire_id INTEGER NOT NULL REFERENCES comptes(id) ON DELETE CASCADE,
+      contenu TEXT NOT NULL,
+      lu INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_messages_expediteur ON messages(expediteur_id);
+    CREATE INDEX IF NOT EXISTS idx_messages_destinataire ON messages(destinataire_id);
   `);
 }
 

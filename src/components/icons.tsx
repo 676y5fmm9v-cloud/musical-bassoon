@@ -113,3 +113,86 @@ export function IconBook({ className = base }: IconProps) {
     </svg>
   );
 }
+
+export function IconAnnonce({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H6.75A2.75 2.75 0 014 12.995v-1.99a2.75 2.75 0 012.75-2.75h1.5c.704 0 1.402-.03 2.09-.09m0 7.49c1.95.17 3.85.57 5.66 1.17.84.28 1.75-.3 1.75-1.19V6.57c0-.89-.91-1.47-1.75-1.19a24.65 24.65 0 01-5.66 1.17m0 7.49V6.56" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 8.5a4.5 4.5 0 010 7" />
+    </svg>
+  );
+}
+
+export function IconMessage({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.154 0-2.304-.05-3.44-.148a2.11 2.11 0 01-.55-.106M16.5 8.511V6.75A2.25 2.25 0 0014.25 4.5h-9A2.25 2.25 0 003 6.75v6.5a2.25 2.25 0 002.25 2.25h.75v3l3.144-3.03c.229.02.46.03.692.03h2.414M16.5 8.511c-1.657 0-3.32.045-4.97.134A2.11 2.11 0 009.75 10.75v.01" />
+    </svg>
+  );
+}
+
+export function IconHomework({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h3m-7.5 4.5h12a2.25 2.25 0 002.25-2.25V7.5L15 3H6.75A2.25 2.25 0 004.5 5.25v13.5A2.25 2.25 0 006.75 21z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 3v4.5a1.5 1.5 0 001.5 1.5h4.5" />
+    </svg>
+  );
+}
+
+export function IconCalendar({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0V11.25A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+    </svg>
+  );
+}
+
+export function IconNotebook({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m-7.5-15h15a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75h-15a.75.75 0 01-.75-.75V5.25a.75.75 0 01.75-.75z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 9h2.25M4.5 13.5h2.25" />
+    </svg>
+  );
+}
+
+export function IconAttendance({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  );
+}
+
+export function IconSend({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.77 59.77 0 0121.485 12 59.77 59.77 0 013.27 20.874L6 12zm0 0h7.5" />
+    </svg>
+  );
+}
+
+export function IconFamily({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+    </svg>
+  );
+}
+
+export function IconDocument({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+    </svg>
+  );
+}
+
+export function IconChevronRight({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+    </svg>
+  );
+}

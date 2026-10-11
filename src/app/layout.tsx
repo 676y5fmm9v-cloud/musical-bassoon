@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Sidebar } from "@/components/Sidebar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kalan · Gestion Scolaire",
+  title: "Kalan · Toute l'école dans une seule application",
   description:
-    "Kalan est une application de gestion scolaire : élèves, enseignants, classes, matières et notes.",
+    "Kalan est une application de gestion scolaire : élèves, enseignants, parents et direction, tous connectés.",
 };
 
 // Nearly every page reads live data from the SQLite database (including
@@ -34,16 +33,7 @@ export default function RootLayout({
       lang="fr"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="h-full bg-slate-50 text-slate-900">
-        <div className="flex h-full min-h-screen flex-col lg:flex-row">
-          <Sidebar />
-          <div className="flex min-w-0 flex-1 flex-col">
-            <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
-              <div className="mx-auto w-full max-w-6xl">{children}</div>
-            </main>
-          </div>
-        </div>
-      </body>
+      <body className="h-full bg-slate-50 text-slate-900">{children}</body>
     </html>
   );
 }
